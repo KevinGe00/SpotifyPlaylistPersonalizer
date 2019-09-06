@@ -111,102 +111,84 @@ app.get('/callback', function(req, res) {
           headers: authHeader,
           json: true
           };
+               //access each of currrent user's playlists
+               request.get(currentUserPlaylists, function(error, response, body) {
 
-        //  creates the playlist
-        var newPlaylist = {
-        url: 'https://api.spotify.com/v1/users/' + "citatlon" + '/playlists',
-        body: JSON.stringify({
-            'name': "test",
-            'public': false
-        }),
-        dataType:'json',
-        headers: {
-            'Authorization': 'Bearer ' + access_token,
-            'Content-Type': 'application/json',
-        }
-         };
-        var newPlaylistid = 1;
-
-        var promise1 = new Promise(function(resolve, reject){
-
-            request.post(newPlaylist, function(error, response, body) {
-            var data = JSON.parse(body);
-            var newid = data.id;
-
-            if(typeof newid !== "undefined"){
-              resolve(newid);
-            }else{
-              reject("rejected");
-            };
-              })
-
-            
-        });
-
-        promise1.then(function(id){
-          newPlaylistid = id;
-        })
-
-        console.log(newPlaylistid);
+                //loop through all playlists
+                body.items.forEach(function(playlist){
+                  // console.log(playlist.tracks);
+                  var trackHref = playlist.tracks.href;
+                  var currentUserPlaylistsTracks = {
+                  url: trackHref,
+                  headers: authHeader,
+                  json: true
+                };
+    
+                  //loop through tracks of current playlist
+                  request.get(currentUserPlaylistsTracks, function(error,  response, body){
+                      body.items.forEach(function(track){
+                        
+                        track.track.artists.forEach(function(artist){
+                            if (userArtists.indexOf(artist.name) === -1){
+                              //if not duplicate, add
+                                userArtists.push(artist.name);
+                                // console.log(artist.name); 
+                            } 
+                        })
+    
+              
+                      })
+                      console.log(userArtists.length);
+                      
         
-
-
-
-
-
-        //access each of currrent user's playlists
-        request.get(currentUserPlaylists, function(error, response, body) {
-
-          //loop through all playlists
-          body.items.forEach(function(playlist){
-            // console.log(playlist.tracks);
-            var trackHref = playlist.tracks.href;
-            var currentUserPlaylistsTracks = {
-            url: trackHref,
-            headers: authHeader,
-            json: true
-          };
-
-            //loop through tracks of current playlist
-            request.get(currentUserPlaylistsTracks, function(error,  response, body){
-                body.items.forEach(function(track){
-                  
-                  track.track.artists.forEach(function(artist){
-                      if (userArtists.indexOf(artist.name) === -1){
-                        //if not duplicate, add
-                          userArtists.push(artist.name);
-                          // console.log(artist.name); 
-                      } 
-                  })
-
-         
-                })
-                 console.log(userArtists.length);
-
-                 
-
-              request.get(targetPlaylist, function(error, response, body){
-              body.items.forEach(function(track){
-                var songArtists = track.track.artists
-                songArtists.forEach(function(artist){
-                  // console.log(artist);
-                if (userArtists.includes(artist.name)){
-                  // console.log(track);
-                  // console.log(track.track.name +" by " +artist.name);
-
-                }
-              })
-
-            })
-
-          })
+      
               
             })
-
            
-          })       
+          })    
+    //  creates the playlist
+          var newPlaylist = {
+            url: 'https://api.spotify.com/v1/users/' + "citatlon" + '/playlists',
+            body: JSON.stringify({
+                'name': "test",
+                'public': false
+            }),
+            dataType:'json',
+            headers: {
+                'Authorization': 'Bearer ' + access_token,
+                'Content-Type': 'application/json',
+            }
+             };
     
-
+    
+            var promise1 = new Promise(function(resolve, reject) {
+              request.post(newPlaylist, function(error, response, body) {
+                var data = JSON.parse(body);
+                resolve(data.id);
+                })
+            });
+            
+    
+            promise1.then(function(id){
+              //loops through target playlists and perform an action based on 
+              request.get(targetPlaylist, function(error, response, body){
+                      body.items.forEach(function(track){
+                        var songArtists = track.track.artists
+                        songArtists.forEach(function(artist){
+                          // console.log(artist);
+                        if (userArtists.includes(artist.name)){
+                          // console.log(track);
+                          console.log(track.track.name +" by " +artist.name);
+    
+                        }
+                      })
+    
+                    })
+    
+                  })
+    
+              
+            });
 
 
 
