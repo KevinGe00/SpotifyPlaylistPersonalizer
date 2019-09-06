@@ -179,6 +179,7 @@ app.get('/callback', function(req, res) {
                         if (userArtists.includes(artist.name)){
                           // console.log(track);
                           console.log(track.track.name +" by " +artist.name);
+                          console.log(id);
     
                         }
                       })
