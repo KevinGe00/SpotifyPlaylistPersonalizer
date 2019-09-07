@@ -177,10 +177,25 @@ app.get('/callback', function(req, res) {
                         songArtists.forEach(function(artist){
                           // console.log(artist);
                         if (userArtists.includes(artist.name)){
-                          // console.log(track);
-                          console.log(track.track.name +" by " +artist.name);
-                          console.log(id);
-    
+                          var trackuri = track.track.uri;
+
+                          var songToAdd = {
+                            url: "https://api.spotify.com/v1/users/" + "citatlon" +"/playlists/"+ id + "/tracks?",
+
+                            body: JSON.stringify({
+                                'uris': [trackuri],
+                            }),
+                            dataType:'json',
+                            headers: {
+                                'Authorization': 'Bearer ' + access_token,
+                                'Content-Type': 'application/json',
+                            }
+                          };
+                        
+                          request.post(songToAdd, function(error, response, body){
+
+                          })
+
                         }
                       })
     
