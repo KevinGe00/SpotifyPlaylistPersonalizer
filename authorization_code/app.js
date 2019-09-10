@@ -38,7 +38,7 @@ app.get('/login', function(req, res) {
   res.cookie(stateKey, state);
 
   // authorization scope 
-  var scope = 'user-read-private user-read-email playlist-modify-private';
+  var scope = 'user-read-private user-read-email playlist-modify-private user-top-read';
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
@@ -131,7 +131,7 @@ app.get('/callback', function(req, res) {
     
               
                       })
-                      console.log(userArtists.length);
+                      // console.log(userArtists.length);
                       
         
       
@@ -139,7 +139,23 @@ app.get('/callback', function(req, res) {
             })
            
           })    
-          console.log(userArtists.length);
+
+          var currentUserTopArtists = {
+            url: 'https://api.spotify.com/v1/me/top/artists?limit=50',
+            headers: authHeader,
+            json: true
+          };
+
+          request.get(currentUserTopArtists, function(error, response, body){
+              body.items.forEach(function(artist){
+                  if(userArtists.indexOf(artist.name) == -1){
+                    userArtists.push(artist.name);
+                  }
+              });
+
+          });
+  
+
 
 
     //  creates the playlist
@@ -157,7 +173,7 @@ app.get('/callback', function(req, res) {
              };
     
             //promise object used to fix problems caused by asynchronous javascript, 
-            //ensure data from post is saved properly
+            //ensure data from post request is saved properly
             var promise1 = new Promise(function(resolve, reject) {
               request.post(newPlaylist, function(error, response, body) {
                 var data = JSON.parse(body);
