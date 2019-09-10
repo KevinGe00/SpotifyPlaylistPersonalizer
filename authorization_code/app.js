@@ -1,12 +1,3 @@
-/**
- * This is an example of a basic node.js script that performs
- * the Authorization Code oAuth2 flow to authenticate against
- * the Spotify Accounts.
- *
- * For more information, read
- * https://developer.spotify.com/web-api/authorization-guide/#authorization_code_flow
- */
-
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
 var cors = require('cors');
@@ -46,7 +37,7 @@ app.get('/login', function(req, res) {
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
 
-  // your application requests authorization
+  // authorization scope 
   var scope = 'user-read-private user-read-email playlist-modify-private';
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
@@ -104,13 +95,14 @@ app.get('/callback', function(req, res) {
         };
 
         // use the access token to access the Spotify Web API
-
+        //spotify:playlist:37i9dQZF1DX4JAvHpjipBk
         //target playlist object
         var targetPlaylist = {
           url: "https://api.spotify.com/v1/playlists/37i9dQZF1DX4JAvHpjipBk/tracks",
           headers: authHeader,
           json: true
           };
+
                //access each of currrent user's playlists
                request.get(currentUserPlaylists, function(error, response, body) {
 
@@ -118,6 +110,7 @@ app.get('/callback', function(req, res) {
                 body.items.forEach(function(playlist){
                   // console.log(playlist.tracks);
                   var trackHref = playlist.tracks.href;
+                  
                   var currentUserPlaylistsTracks = {
                   url: trackHref,
                   headers: authHeader,
@@ -146,6 +139,9 @@ app.get('/callback', function(req, res) {
             })
            
           })    
+          console.log(userArtists.length);
+
+
     //  creates the playlist
           var newPlaylist = {
             url: 'https://api.spotify.com/v1/users/' + "citatlon" + '/playlists',
@@ -160,7 +156,8 @@ app.get('/callback', function(req, res) {
             }
              };
     
-    
+            //promise object used to fix problems caused by asynchronous javascript, 
+            //ensure data from post is saved properly
             var promise1 = new Promise(function(resolve, reject) {
               request.post(newPlaylist, function(error, response, body) {
                 var data = JSON.parse(body);
@@ -171,30 +168,36 @@ app.get('/callback', function(req, res) {
     
             promise1.then(function(id){
               //loops through target playlists and perform an action based on 
-              request.get(targetPlaylist, function(error, response, body){
-                      body.items.forEach(function(track){
-                        var songArtists = track.track.artists
-                        songArtists.forEach(function(artist){
-                          // console.log(artist);
-                        if (userArtists.includes(artist.name)){
-                          var trackuri = track.track.uri;
+              request.get(targetPlaylist, function(error, response, body){    
+                var duplicates = [];
 
-                          var songToAdd = {
-                            url: "https://api.spotify.com/v1/users/" + "citatlon" +"/playlists/"+ id + "/tracks?",
+                body.items.forEach(function(track){
+                        var songArtists = track.track.artists;
+                        var trackuri = track.track.uri;
 
-                            body: JSON.stringify({
-                                'uris': [trackuri],
-                            }),
-                            dataType:'json',
-                            headers: {
-                                'Authorization': 'Bearer ' + access_token,
-                                'Content-Type': 'application/json',
-                            }
-                          };
+                        //mechanism to avoid duplicates when adding songs with multiple artists
+                        if (songArtists.length>1){
+                            duplicates.push(trackuri)
+                        }
                         
-                          request.post(songToAdd, function(error, response, body){
+                        songArtists.forEach(function(artist){
+                          //checks if song artist is listened to by user and that it hasn't already been added
+                            if (userArtists.includes(artist.name)&&(duplicates.indexOf(trackuri)==-1)){
 
-                          })
+                              var songToAdd = {
+                                url: "https://api.spotify.com/v1/users/" + "citatlon" +"/playlists/"+ id + "/tracks?",
+                                body: JSON.stringify({
+                                    'uris': [trackuri],
+                                }),
+                                dataType:'json',
+                                headers: {
+                                    'Authorization': 'Bearer ' + access_token,
+                                    'Content-Type': 'application/json',
+                                }
+                              };
+                            
+                              request.post(songToAdd, function(error, response, body){
+                              })
 
                         }
                       })
@@ -209,25 +212,6 @@ app.get('/callback', function(req, res) {
 
 
         });
-
-        
-        //creates the playlist
-        //  var authOptions1 = {
-        // url: 'https://api.spotify.com/v1/users/' + "citatlon" + '/playlists',
-        // body: JSON.stringify({
-        //     'name': "test",
-        //     'public': false
-        // }),
-        // dataType:'json',
-        // headers: {
-        //     'Authorization': 'Bearer ' + access_token,
-        //     'Content-Type': 'application/json',
-        // }
-        //  };
-
-        // request.post(authOptions1, function(error, response, body) {
-        //     console.log(body);
-        // });
 
 
         // we can also pass the token to the browser to make requests from there
