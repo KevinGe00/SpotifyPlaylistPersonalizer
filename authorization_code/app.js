@@ -37,6 +37,10 @@ app.use('/public', express.static('public'))
 app.get('/',function(req, res){
 	res.render('home');
 })
+
+app.get('/postlogin', function(req,res){
+  res.render('postlogin');
+})
 app.get('/login', function(req, res) {
 
   var state = generateRandomString(16);
@@ -52,6 +56,9 @@ app.get('/login', function(req, res) {
       redirect_uri: redirect_uri,
       state: state
     }));
+
+
+
 });
 
 app.get('/callback', function(req, res) {
@@ -219,7 +226,7 @@ app.get('/callback', function(req, res) {
                             
                               request.post(songToAdd, function(error, response, body){
                               })
-
+                             
                         }
                       })
     

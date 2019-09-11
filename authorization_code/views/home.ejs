@@ -3,25 +3,30 @@
 <head>
 
   <title></title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/public/css/style.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.js"></script>
 </head>
 
 <body>
-   <div class="container">
-      <div id="login">
-        <h1>Create your own personalized playlists!</h1>
-        <div class="text-center">
-        <a href="/login" class="btn btn-primary center-block">Log in with Spotify</a>
-        </div>
+  <div id="title" class="d-flex justify-content-center">
+      <h1 id='title'>Create your own personalized playlists!</h1>
+  </div>
+
+  <div class="container">
+      <div class="form-group">
+        <form method="GET" action='/postlogin'>
+          <label for="exampleFormControlInput1">Pick your Playlist!</label>
+          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Enter playlist's uri">
+          <button type="submit" class="btn btn-primary">GO!</button>
+        </form>
       </div>
-      <div id="loggedin">
-        <div id="user-profile">
-        </div>
-        <div id="oauth">
-        </div>
-        <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
-      </div>
-    </div>
+
+  </div>
+  
+<form>
+
+</form>
+<script type="text/javascript" src="/public/script.js"></script>
 </body>
 </html>
