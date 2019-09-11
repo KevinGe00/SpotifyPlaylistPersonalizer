@@ -28,10 +28,15 @@ var stateKey = 'spotify_auth_state';
 
 var app = express();
 
-app.use(express.static(__dirname + '/public'))
-   .use(cors())
+app.set('view engine', 'ejs');
+
+app.use('/public', express.static('public'))
+ .use(cors())
    .use(cookieParser());
 
+app.get('/',function(req, res){
+	res.render('home');
+})
 app.get('/login', function(req, res) {
 
   var state = generateRandomString(16);
