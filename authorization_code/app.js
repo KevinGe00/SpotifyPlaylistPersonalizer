@@ -3,13 +3,14 @@ var request = require('request'); // "Request" library
 var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
+var bodyParser = require("body-parser");
 
 var client_id = 'f6dd883dd6824aec8f9c34afead41b35'; // Your client id
 var client_secret = '39f6c6a964bb4daaa35b4fdc7c0b4fc3'; // Your secret
 var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 var userArtists = [];
 
-/** 
+/**
  * Generates a random string containing numbers and letters
  * @param  {number} length The length of the string
  * @return {string} The generated string
@@ -27,6 +28,7 @@ var generateRandomString = function(length) {
 var stateKey = 'spotify_auth_state';
 
 var app = express();
+app.use(bodyParser.urlencoded({extended:true}))
 
 app.set('view engine', 'ejs');
 
@@ -37,10 +39,23 @@ app.use('/public', express.static('public'))
 app.get('/',function(req, res){
 	res.render('home');
 })
+//declare the uri of the targeted playlist globally
+var targetPlaylisturi;
 
-app.get('/postlogin', function(req,res){
+//
+app.post('/postlogin', function(req,res){
+  //recieves data from front page input field 
+  var rawuri = req.body.uri;
+  //selects only the uri
+  var uri = rawuri.substring(rawuri.indexOf("playlist:")+9);
+  //refined uri saved globally for later use after use logins
+  targetPlaylisturi = uri;
   res.render('postlogin');
+
 })
+
+
+
 app.get('/login', function(req, res) {
 
   var state = generateRandomString(16);
@@ -110,7 +125,7 @@ app.get('/callback', function(req, res) {
         //spotify:playlist:37i9dQZF1DX4JAvHpjipBk
         //target playlist object
         var targetPlaylist = {
-          url: "https://api.spotify.com/v1/playlists/37i9dQZF1DX4JAvHpjipBk/tracks",
+          url: "https://api.spotify.com/v1/playlists/"+ targetPlaylisturi+ "/tracks",
           headers: authHeader,
           json: true
           };

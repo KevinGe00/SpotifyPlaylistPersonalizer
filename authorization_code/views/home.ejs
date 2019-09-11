@@ -15,11 +15,14 @@
 
   <div class="container">
       <div class="form-group">
-        <form method="GET" action='/postlogin'>
+
+        <form action='/postlogin' method="POST" >
           <label for="exampleFormControlInput1">Pick your Playlist!</label>
-          <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Enter playlist's uri">
-          <button type="submit" class="btn btn-primary">GO!</button>
+          <input type="text" name="uri" class="form-control" id="exampleFormControlInput1" placeholder="Enter playlist's uri">
+          
+         <a href="/postlogin"> <button class="btn btn-primary">GO!</button></a>
         </form>
+        
       </div>
 
   </div>
