@@ -123,15 +123,16 @@ app.get('/callback', function(req, res) {
         // use the access token to access the Spotify Web API
 
         //target playlist object
-        var targetPlaylist = {
+        var targetPlaylistTracks = {
           url: "https://api.spotify.com/v1/playlists/"+ targetPlaylisturi+ "/tracks",
           headers: authHeader,
           json: true
           };
 
                //access each of currrent user's playlists
+               
                request.get(currentUserPlaylists, function(error, response, body) {
-
+            
                 //loop through all playlists
                 body.items.forEach(function(playlist){
                   // console.log(playlist.tracks);
@@ -158,7 +159,7 @@ app.get('/callback', function(req, res) {
               
                       })
                       // console.log(userArtists.length);
-                      
+            
         
       
               
@@ -180,100 +181,111 @@ app.get('/callback', function(req, res) {
               });
 
           });
+    var targetPlaylist = {
+      url: "https://api.spotify.com/v1/playlists/"+ targetPlaylisturi,
+      headers: authHeader,
+      json: true
+            };
+
+    var promise3 = new Promise(function(resolve, reject){
+      request.get(targetPlaylist, function(error, response, body){   
+        resolve(body.name);
   
+      });
+    });
 
 
-    //find display name of current user
+    //promise display name of current user and name of target playlist
     var promise2 = new Promise(function(resolve, reject) {
       var userInfo = {
         url: "https://api.spotify.com/v1/me",
         headers: authHeader,
         json: true
       }
-      var userName;
+
       request.get(userInfo, function(error,response, body){
               console.log(body.id);
               resolve(body.id);
       });
-      
-    });
-    promise2.then(function(username){
-       //  creates the playlist
-       var newPlaylist = {
-        url: 'https://api.spotify.com/v1/users/' + username + '/playlists',
-        body: JSON.stringify({
-            'name': "test",
-            'public': false
-        }),
-        dataType:'json',
-        headers: {
-            'Authorization': 'Bearer ' + access_token,
-            'Content-Type': 'application/json',
-        }
-         };
-      
-        //promise object used to fix problems caused by asynchronous javascript, 
-        //ensure data from post request is saved properly
-        var promise1 = new Promise(function(resolve, reject) {
-          request.post(newPlaylist, function(error, response, body) {
-            var data = JSON.parse(body);
-            resolve(data.id);
-            })
-        });
-        
 
-        promise1.then(function(id){
-          //loops through target playlists and perform an action based on 
-          request.get(targetPlaylist, function(error, response, body){    
-            var duplicates = [];
-
-            body.items.forEach(function(track){
-                    var songArtists = track.track.artists;
-                    var trackuri = track.track.uri;
-
-                    //mechanism to avoid duplicates when adding songs with multiple artists
-                    if (songArtists.length>1){
-                        duplicates.push(trackuri)
-                    }
-                    
-                    songArtists.forEach(function(artist){
-                      //checks if song artist is listened to by user and that it hasn't already been added
-                        if (userArtists.includes(artist.name)&&(duplicates.indexOf(trackuri)==-1)){
-
-                          var songToAdd = {
-                            url: "https://api.spotify.com/v1/users/" + "citatlon" +"/playlists/"+ id + "/tracks?",
-                            body: JSON.stringify({
-                                'uris': [trackuri],
-                            }),
-                            dataType:'json',
-                            headers: {
-                                'Authorization': 'Bearer ' + access_token,
-                                'Content-Type': 'application/json',
-                            }
-                          };
-                        
-                          request.post(songToAdd, function(error, response, body){
-                          })
-                         
-                    }
-                  })
-
-                })
-
-              })
-
-          
-        });
-
-              
-    })
- 
    
 
-
         });
-
-
+     
+        Promise.all([promise2,promise3]).then(function(values){
+          //  creates the playlist
+         
+          var newPlaylist = {
+            
+           url: 'https://api.spotify.com/v1/users/' + values[0] + '/playlists',
+           body: JSON.stringify({
+               'name': " ' "+ values[1] +"'" +" personalized just for you!" ,
+               'public': false
+           }),
+           dataType:'json',
+           headers: {
+               'Authorization': 'Bearer ' + access_token,
+               'Content-Type': 'application/json',
+           }
+            };
+         
+           //promise object used to fix problems caused by asynchronous javascript, 
+           //ensure data from post request is saved properly
+           var promise1 = new Promise(function(resolve, reject) {
+             request.post(newPlaylist, function(error, response, body) {
+               var data = JSON.parse(body);
+               resolve(data.id);
+               })
+           });
+           
+   
+           promise1.then(function(id){
+             //loops through target playlists and perform an action based on 
+             request.get(targetPlaylistTracks, function(error, response, body){    
+               var duplicates = [];
+   
+               body.items.forEach(function(track){
+                       var songArtists = track.track.artists;
+                       var trackuri = track.track.uri;
+   
+                       //mechanism to avoid duplicates when adding songs with multiple artists
+                       if (songArtists.length>1){
+                           duplicates.push(trackuri)
+                       }
+                       
+                       songArtists.forEach(function(artist){
+                         //checks if song artist is listened to by user and that it hasn't already been added
+                           if (userArtists.includes(artist.name)&&(duplicates.indexOf(trackuri)==-1)){
+   
+                             var songToAdd = {
+                               url: "https://api.spotify.com/v1/users/" + "citatlon" +"/playlists/"+ id + "/tracks?",
+                               body: JSON.stringify({
+                                   'uris': [trackuri],
+                               }),
+                               dataType:'json',
+                               headers: {
+                                   'Authorization': 'Bearer ' + access_token,
+                                   'Content-Type': 'application/json',
+                               }
+                             };
+                           
+                             request.post(songToAdd, function(error, response, body){
+                             })
+                            
+                       }
+                     })
+   
+                   })
+   
+                 })
+   
+             
+           });
+   
+                 
+       })
+    
+      });
         // we can also pass the token to the browser to make requests from there
         res.redirect('/#' +
           querystring.stringify({
