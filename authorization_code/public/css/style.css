@@ -5,7 +5,47 @@ body{
 } 
 
 #title{
-    margin-top: 4%;
-    background:grey;
+    margin-top: 2%;
     color:white;
+}
+
+.imagecontainer {
+    position: relative;
+    width: 50%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+.imagecontainer:hover .overlay {
+    opacity: 1;
+  }
+.image{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    height:auto;
+  }
+  .overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    transition: .5s ease;
+    background-color: #656e73;
+  }
+.text {
+  color: white;
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  text-align: center;
 }
