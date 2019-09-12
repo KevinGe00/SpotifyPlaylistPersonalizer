@@ -9,7 +9,8 @@ var client_id = 'f6dd883dd6824aec8f9c34afead41b35'; // Your client id
 var client_secret = '39f6c6a964bb4daaa35b4fdc7c0b4fc3'; // Your secret
 var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 var userArtists = [];
-var playListName;
+var targetplayListName;
+var targetPlaylistCover;
 /**
  * Generates a random string containing numbers and letters
  * @param  {number} length The length of the string
@@ -41,7 +42,7 @@ app.get('/',function(req, res){
 //declare the uri of the targeted playlist globally
 var targetPlaylisturi;
 
-//
+
 app.post('/postlogin', function(req,res){
   //recieves data from front page input field 
   var rawuri = req.body.uri;
@@ -49,10 +50,8 @@ app.post('/postlogin', function(req,res){
   var uri = rawuri.substring(rawuri.indexOf("playlist:")+9);
   //refined uri saved globally for later use after use logins
   targetPlaylisturi = uri;
+  res.render('postlogin',{playListName: targetplayListName, playlistCover:targetPlaylistCover});
 
-  res.render('postlogin',{playListName: playListName} );
-
-  
 
 })
 
@@ -125,7 +124,7 @@ app.get('/callback', function(req, res) {
 
         // use the access token to access the Spotify Web API
 
-        //target playlist object
+        //target playlist tracks 
         var targetPlaylistTracks = {
           url: "https://api.spotify.com/v1/playlists/"+ targetPlaylisturi+ "/tracks",
           headers: authHeader,
@@ -176,7 +175,17 @@ app.get('/callback', function(req, res) {
               });
 
           });
-  
+    //promise for playlist cover image
+    var promise4 = new Promise(function(resolve, reject){
+      var playlistCover ={
+        url: 	"https://api.spotify.com/v1/playlists/" + targetPlaylisturi +"/images",
+        headers: authHeader
+      }
+      request.get(playlistCover, function(error,response, body){
+        resolve(JSON.parse(body)[0].url);
+      })
+    });
+
     //promise for name of target playlist
     var promise3 = new Promise(function(resolve, reject){
       var targetPlaylist = {
@@ -207,15 +216,16 @@ app.get('/callback', function(req, res) {
 
         });
         //waits until request recieves both current user's username and the name of the target playlist
-        Promise.all([promise2,promise3]).then(function(values){
+        Promise.all([promise2,promise3,promise4]).then(function(values){
           //  creates the playlist
-          playListName = values[1];
+          targetplayListName = values[1];
+          targetPlaylistCover = values[2];
           var newPlaylist = {
-            
            url: 'https://api.spotify.com/v1/users/' + values[0] + '/playlists',
            body: JSON.stringify({
                'name': " ' "+ values[1] +"'" +" personalized just for you!" ,
-               'public': false
+               'public': false,
+               'description': 'github.com/KevinGe00/SpotifyPlaylistPersonalizer'
            }),
            dataType:'json',
            headers: {
