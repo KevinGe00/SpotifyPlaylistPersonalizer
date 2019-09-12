@@ -9,7 +9,7 @@ var client_id = 'f6dd883dd6824aec8f9c34afead41b35'; // Your client id
 var client_secret = '39f6c6a964bb4daaa35b4fdc7c0b4fc3'; // Your secret
 var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 var userArtists = [];
-
+var playListName;
 /**
  * Generates a random string containing numbers and letters
  * @param  {number} length The length of the string
@@ -49,7 +49,10 @@ app.post('/postlogin', function(req,res){
   var uri = rawuri.substring(rawuri.indexOf("playlist:")+9);
   //refined uri saved globally for later use after use logins
   targetPlaylisturi = uri;
-  res.render('postlogin');
+
+  res.render('postlogin',{playListName: playListName} );
+
+  
 
 })
 
@@ -135,7 +138,6 @@ app.get('/callback', function(req, res) {
             
                 //loop through all playlists
                 body.items.forEach(function(playlist){
-                  // console.log(playlist.tracks);
                   var trackHref = playlist.tracks.href;
                   
                   var currentUserPlaylistsTracks = {
@@ -152,17 +154,9 @@ app.get('/callback', function(req, res) {
                             if (userArtists.indexOf(artist.name) === -1){
                               //if not duplicate, add
                                 userArtists.push(artist.name);
-                                // console.log(artist.name); 
                             } 
-                        })
-    
-              
-                      })
-                      // console.log(userArtists.length);
-            
-        
-      
-              
+                        })           
+                      })             
             })
            
           })    
@@ -175,27 +169,28 @@ app.get('/callback', function(req, res) {
 
           request.get(currentUserTopArtists, function(error, response, body){
               body.items.forEach(function(artist){
+                  //if artist not in array of user artists, add the artist
                   if(userArtists.indexOf(artist.name) == -1){
                     userArtists.push(artist.name);
                   }
               });
 
           });
-    var targetPlaylist = {
-      url: "https://api.spotify.com/v1/playlists/"+ targetPlaylisturi,
-      headers: authHeader,
-      json: true
-            };
-
+  
+    //promise for name of target playlist
     var promise3 = new Promise(function(resolve, reject){
+      var targetPlaylist = {
+        url: "https://api.spotify.com/v1/playlists/"+ targetPlaylisturi,
+        headers: authHeader,
+        json: true
+              };
+       
       request.get(targetPlaylist, function(error, response, body){   
         resolve(body.name);
-  
       });
     });
 
-
-    //promise display name of current user and name of target playlist
+    //promise for display name of current user
     var promise2 = new Promise(function(resolve, reject) {
       var userInfo = {
         url: "https://api.spotify.com/v1/me",
@@ -211,10 +206,10 @@ app.get('/callback', function(req, res) {
    
 
         });
-     
+        //waits until request recieves both current user's username and the name of the target playlist
         Promise.all([promise2,promise3]).then(function(values){
           //  creates the playlist
-         
+          playListName = values[1];
           var newPlaylist = {
             
            url: 'https://api.spotify.com/v1/users/' + values[0] + '/playlists',
