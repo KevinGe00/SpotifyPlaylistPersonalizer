@@ -39,6 +39,7 @@ app.use('/public', express.static('public'))
 app.get('/', function (req, res) {
   res.render('home');
 })
+
 //declare the uri of the targeted playlist globally
 var targetPlaylisturi;
 
@@ -61,7 +62,6 @@ app.get('/login', function (req, res) {
 
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
-
   // authorization scope 
   var scope = 'user-read-private user-read-email playlist-modify-private user-top-read';
   res.redirect('https://accounts.spotify.com/authorize?' +
@@ -76,8 +76,11 @@ app.get('/login', function (req, res) {
 
 
 });
-
 app.get('/callback', function (req, res) {
+  res.render("home1");
+});
+
+app.get('/d', function (req, res) {
 
   // your application requests refresh and access tokens
   // after checking the state parameter

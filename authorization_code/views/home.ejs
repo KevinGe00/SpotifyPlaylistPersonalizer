@@ -4,40 +4,21 @@
 
   <title></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Staatliches&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/public/css/style.css">
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.js"></script>
+    <script src="https://kit.fontawesome.com/fccafde1b7.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
   <div id="title" class="d-flex justify-content-center">
-      <h1 id='title'>Create your own personalized playlists.</h1>
+      <h1>Start creating personalized playlists.</h1>
   </div>
 
-
-  <div class="imagecontainer">
-    <img src="/public/instructions.png" class="image"> 
-    <div class="overlay">
-      <div class="text">
-        <p>1.Choose your Playlist</p>
-        <p>2.Follow these instructions</p>
-        <p>3.Paste in box below</p>
-      </div>
-    </div> 
-    
-  </div>
-  <div class="container">
-    <div class="form-group">
-
-      <form action='/postlogin' method="POST" >
-        <label for="exampleFormControlInput1">Pick your Playlist!</label>
-        <input type="text" name="uri" class="form-control" id="exampleFormControlInput1" placeholder="spotify:playlist:37i9dQZF1DWWMOmoXKqHTD">
-        
-       <a href="/postlogin"> <button class="btn btn-primary">GO!</button></a>
-      </form>
-      
-    </div>
-
+<div id="login" class="d-flex justify-content-center">
+  <a href="/login" id="login" class="btn btn-primary btn-lg">Login to your <i class="fab fa-spotify"></i> Spotify</a>
 </div>
+
 
 <script type="text/javascript" src="/public/script.js"></script>
 </body>
