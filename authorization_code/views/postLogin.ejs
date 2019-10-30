@@ -1,31 +1,92 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
   <title></title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/public/css/style.css">
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Staatliches&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/public/css/style.css">
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.js"></script>
 </head>
 
 <body>
-   <div class="container">
-    <h1>Login into your spotify and watch the magic happen.</h1>
-    <h1> Playlist Selected: <%=playListName %></h1>
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+          <h1 class="display-4">Fluid jumbotron</h1>
+          <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+        </div>
+      </div>
 
-    <img src="<%= playlistCover%>"
-    
-    <div id="login">
-      <a href="/login" id="login" class="btn btn-primary btn-lg ">Log in with Spotify</a>
+  <div class="d-flex flex-column">
+    <h1 id="title1">Hover for Instructions</h1>
+
+    <div class="imagecontainer">
+      <img src="/public/instructions.png" class="image">
+      <div class="overlay">
+        <div class="text">
+          <p>Paste uri in box below</p>
+        </div>
+
+
+      </div>
     </div>
 
 
-  </div>
-    <!-- <div class="contatiner">
-      <form action="/"
 
-    </div> -->
-    
+
+    <div class="container">
+    <form class="form-group">
+      <label for="exampleFormControlInput1" class="margintop" id="title">Paste copied URI here</label>
+      <input type="text" name="uri" class="form-control" id="exampleFormControlInput1"
+        placeholder="spotify:playlist:37i9dQZF1DWWMOmoXKqHTD">
+
+      <form action='generateplaylist' method="GET"></form>
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter"
+        id="modalbutton">
+        Generate Playlist
+      </button></form>
+
+      
+    </form>
+      <!-- Modal -->
+      <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+    </div>
+
+
     <script type="text/javascript" src="/public/script.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"></script>
 </body>
+
+
 </html>

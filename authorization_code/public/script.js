@@ -1,7 +1,23 @@
-// $('#login').on("click", function(){
-//     window.alert("After logging in, check your spotify for your brand new playlist waiting for you!np");
-// })
+jQuery('#modalbutton').on('click', function() {
+    var uri = $("#exampleFormControlInput1").val();
+    $.ajax({
+        url: 'http://localhost:8888/textboxuri',
+        dataType: 'text',
+        type: 'post',
+        data: uri,
+        success: function(){
+            window.alert("success")
+        },
+        error: function(){
+            console.log("fail")
+        }
+    });
 
-// $(".overlay").on('click', function(){
-//     window.alert('d');
-// })
+    setTimeout(function(){  $.get( "http://localhost:8888/generateplaylist", function( data ) {
+        $(".modal-title").text("Playlist Selected: "+ data[1]);
+        var imagesrc = data[2];
+        $('.modal-body').prepend($('<img>',{src:imagesrc}))
+      });}, 200);
+   
+});
+
