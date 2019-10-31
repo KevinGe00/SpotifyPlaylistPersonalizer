@@ -16,7 +16,7 @@ jQuery('#modalbutton').on('click', function() {
     setTimeout(function(){  $.get( "http://localhost:8888/generateplaylist", function( data ) {
         $(".modal-title").text("Playlist Selected: "+ data[1]);
         var imagesrc = data[2];
-        $('.modal-body').prepend($('<img>',{src:imagesrc}))
+        $('.modal-body').prepend($('<img>',{src:imagesrc, class:"center"}))
       });}, 200);
    
 });
