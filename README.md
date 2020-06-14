@@ -1,6 +1,23 @@
 # Spotify Pesonalizer
 
-* Authorization Code flow
-* Client Credentials flow
-* Implicit Grant flow
+## Description
+A web service allowing you to filter input playlists, leaving only songs by artists that you listen to!
 
+## Stack
+```
+HTML/CSS
+BootStrap 
+NodeJS
+Express.js
+OAuth 2.0
+```
+
+## Screenshots
+#### 1. Login Screen
+![Screenshot](screenshot1.png)
+#### 2. Playlist Selection Screen
+![Screenshot](screenshot2.png)
+#### 3. After Selection Screen
+![Screenshot](screenshot3.png)
+#### 4. New playlist instantly appears in your Spotify!
+![Screenshot](screenshot4.png)
