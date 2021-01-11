@@ -1,4 +1,4 @@
-# Spotify Pesonalizer
+# Spotify Personalizer
 
 ## Description
 A web service allowing you to filter input playlists, providing you with only songs by artists that you listen to through a playlist instantly generated onto your Spotify library.
